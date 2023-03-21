@@ -61,6 +61,22 @@ class FixedResistance(Resistor):
             raise AttributeError("Ohms는 불변 객체입니다")
         self._ohms = ohms
 
-r4 = FixedResistance(1e3)
-r4.ohms = 2e3
+# r4 = FixedResistance(1e3)
+# r4.ohms = 2e3
+
+class MysteriousResistor(Resistor):
+    @property
+    def ohms(self):
+        self.voltage = self._ohms * self.current
+        return self._ohms
+    
+    @ohms.setter
+    def ohms(self, ohms):
+        self._ohms = ohms
+
+r7 = MysteriousResistor(10)
+r7.current = 0.01
+print(f'이전: {r7.voltage:.2f}')
+r7.ohms
+print(f'이후: {r7.voltage:.2f}')
 
