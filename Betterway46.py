@@ -70,7 +70,7 @@ class Grade:
     def __set__(self, instance, value):
         if not (0 <= value <= 100):
             raise ValueError('점수는 0과 100 사이입니다')
-        self._values[instance] =  WeakKeyDictionary
+        self._values[instance] = value
 
 
 

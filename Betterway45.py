@@ -6,12 +6,10 @@ class Bucket:
         self.period_delta = timedelta(seconds = period)
         self.reset_time = datetime.now()
         self.quota = 0
-        
-    @property
+
     def __repr__(self):
         return f'Bucket(quota={self.quota})'
     
-    @property
     def fill(bucket, amount):
         now = datetime.now()
         if (now - bucket.reset_time) > bucket.period_delta:
@@ -19,7 +17,6 @@ class Bucket:
             bucket.reset_time = now
         bucket.quota += amount
 
-    @property
     def deduct(bucket, amount):
         now = datetime.now()
         if (now - bucket.reset_time) > bucket.period_delta:
