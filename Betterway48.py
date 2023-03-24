@@ -54,3 +54,15 @@ class Line(Polygon):
     print('sides 이후')
 
 print('class 이후')
+
+class BetterPolygon:
+    sides = None # 하위 클래스에서 이 애트리뷰트의 값을 지정해야함
+    
+    def __init_subclass__(cls):
+        super().__init_subclass__()
+        if cls.sides < 3:
+            raise ValueError('다각형 변은 3개 이상이어야 함')
+        
+    @classmethod
+    def interior_angles(cls):
+        return ()
