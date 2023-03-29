@@ -56,3 +56,4 @@ for thread in threads:
 expected = how_many * 5
 found = counter.count
 print(f'카운터 값은 {expected}여야 하는데, 실제로는 {found} 입니다')
+
