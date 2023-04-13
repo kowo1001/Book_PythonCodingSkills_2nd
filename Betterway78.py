@@ -137,3 +137,64 @@ with patch('__main__.get_animals'):
     print('패치 내부: ', get_animals)
     
 print('다시 외부:', get_animals)
+
+
+fake_now = datetime(2020, 6, 5, 15, 45)
+
+with patch('datetime.datetime.utcnow'):
+    datetime.utcnow.return_value = fake_now
+
+## 
+def get_do_rounds_time():
+    return datetime.datetime.utcnow()
+
+def do_rounds(database, species):
+    now = get_do_rounds_time()
+    ...
+
+with patch('__main__.get_do_rounds_time'):
+    ...
+
+## 
+
+def do_rounds(database, species, *, utcnow=datetime.utcnow):
+    now = utcnow()
+    feeding_timedelta = get_food_period(database, species)
+    animals = get_animals(database, species)
+    fed = 0
+
+    for name, last_mealtime in animals:
+        if (now - last_mealtime) > feeding_timedelta:
+            feed_func(database, name, now)
+            fed += 1
+        return fed
+##
+
+from unittest.mock import DEFAULT
+with patch.multiple('__main__',
+                    autospec=True,
+                    get_food_period=DEFAULT,
+                    get_animals=DEFAULT,
+                    feed_animals=DEFAULT):
+    now_func = Mock(spec=datetime.utcnow)
+    now_func.return_value = datetime(2020, 6, 5, 15, 45)
+    get_food_period.return_value = timedelta(hours=3)
+    get_animals.return_value = [
+        ('점박이', datetime(2020, 6, 5, 11, 15)),
+        ('털보', datetime(2020, 6, 5, 12, 30)),
+        ('조조', datetime(2020, 6, 5, 12, 45)),
+    ]
+##
+
+result = do_rounds(database, '미어캣', utcnow=now_func)
+assert result == 2
+
+food_func.assert_called_once_with(database, '미어캣')
+animals_func.assert_called_once_with(database, '미어캣')
+
+feed_func.assert_has_calls(
+    [
+        call(database, '점박이 ', now_func.return_value),
+        call(database, '털보', now_func.return_value),
+    ],
+    any_order=True)
